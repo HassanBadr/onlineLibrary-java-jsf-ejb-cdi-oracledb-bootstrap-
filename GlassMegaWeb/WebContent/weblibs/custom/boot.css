@@ -1,0 +1,50 @@
+navbar-brand {
+	float: right;
+}
+
+@media (min-width: 768px) {
+  .navbar-left {
+    float: right !important;
+  }
+  .navbar-right {
+    float: left !important;
+    margin-right: -15px;
+  }
+  .navbar-right ~ .navbar-right {
+    margin-right: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar-header {
+    float: right;
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar-nav {
+    float: right;
+    margin: 0;
+  }
+  .navbar-nav > li {
+    float: right;
+  }
+  .navbar-nav > li > a {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
+
+.col-xs-3,.col-xs-6{
+	float: right;
+}
+
+@media (min-width: 768px) {
+	.col-sm-4,.col-sm-8{
+		float: right;
+	}
+}
+
+th {
+  text-align: right;
+}

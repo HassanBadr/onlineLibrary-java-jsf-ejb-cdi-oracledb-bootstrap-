@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+<ui:composition template="/WEB-INF/templates/main.xhtml"> 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event listener="#{userSearchBacking.retrieveUserList}" type="preRenderView"/>            
+        </f:metadata>
+    </ui:define>
+    
+    <ui:define name="menu">
+        <ui:include src="/protected/views/menu.xhtml"/>
+    </ui:define>    
+    
+    <ui:define name="content">
+    <div class="panel panel-primary">
+     		 <div class="panel-heading">
+     		 	<h3>#{resbundle['megaapp.protected.admin.userList.head_text']}</h3>
+     		 </div>
+     		 <div class="panel-body">
+                
+        <h:form id="userSearchForm">
+            <h:panelGroup id="results" styleClass="table-responsive">
+                <h:outputText id="informationMessage" 
+                              value="#{userSearchBacking.infoMessage}" 
+                              rendered="#{userSearchBacking.infoMessage ne null}"
+                              class="informationMessage"/>
+
+                <h:dataTable value="#{userSearchBacking.userList}" 
+                             var="megaUser" styleClass="table table-hover" 
+                             rendered="#{not empty userSearchBacking.userList}">
+
+                    <h:column>
+                        <f:facet name="header">
+                            #{resbundle['megaapp.protected.admin.userList.table.login_name']}
+                        </f:facet>
+                        #{megaUser.id}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            #{resbundle['megaapp.protected.admin.userList.table.first_name']}
+                        </f:facet>
+                        #{megaUser.firstName}
+                    </h:column>  
+                    <h:column>
+                        <f:facet name="header">
+                            #{resbundle['megaapp.protected.admin.userList.table.last_name']}
+                        </f:facet>
+                        #{megaUser.lastName}
+                    </h:column> 
+                    
+                   <h:column>
+                       <f:facet name="header">
+                           #{resbundle['megaapp.protected.admin.userList.table.actions']}
+                       </f:facet>
+
+                       <h:commandLink value="" action="#{userSearchBacking.deleteUser}">
+                           <span data-toggle="tooltip" data-placement="top" title="#{resbundle['megaapp.protected.admin.userList.table.actions.delete']}" class="glyphicon glyphicon-trash"></span>
+                           <f:setPropertyActionListener target="#{userSearchBacking.selectedUser}" value="#{megaUser}" />
+                           <f:ajax render="@form" />
+                       </h:commandLink>
+                   </h:column>                         
+
+                </h:dataTable> 
+
+            </h:panelGroup>
+            
+            <h:messages id="messages" class="errorMessage"/>
+        </h:form>
+        </div>
+        </div>
+    </ui:define>
+</ui:composition>
+
+</html>

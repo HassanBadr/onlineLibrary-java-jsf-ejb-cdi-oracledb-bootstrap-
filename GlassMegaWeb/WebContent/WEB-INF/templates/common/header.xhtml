@@ -1,0 +1,21 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets" 
+      xmlns:projsfhtml5="http://xmlns.jcp.org/jsf/composite/projsfhtml5" 
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
+    <ui:composition>
+    <div class="container-fluid" style="background-color:#F44336;color:#fff;height:80px;">
+ 	 <h1>#{resbundle['megaapp.header.head_title']}</h1>
+	</div>
+    <h:form>
+        <projsfhtml5:navbar label="#{resbundle['megaapp.header.label.mega_app']}" value="#{request.contextPath}/protected/pages/bookSearch.xhtml">
+            <projsfhtml5:navitem label="#{resbundle['megaapp.header.label.contact_us']}" value="#{request.contextPath}/public/pages/contactUs.xhtml"/>
+            <projsfhtml5:navitem label="#{resbundle['megaapp.header.label.about']}" value="#{request.contextPath}/public/pages/about.xhtml" dr="right"/>
+      		        
+        </projsfhtml5:navbar>
+     </h:form>
+        <div class="page-header">
+            <h1><ui:insert name="headerText">#{resbundle['megaapp.header.head_title']}</ui:insert></h1>
+        </div>
+    </ui:composition>
+</html>

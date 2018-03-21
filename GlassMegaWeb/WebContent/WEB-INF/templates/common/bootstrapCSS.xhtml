@@ -1,0 +1,20 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:composition>
+        
+        <!-- Bootstrap CSS -->
+        <link href="#{request.contextPath}/weblibs/css/bootstrap.min.css" rel="stylesheet" media="screen"></link>	
+        <link href="#{request.contextPath}/weblibs/custom/megaapp.css" rel="stylesheet"></link>   
+        <c:if test="#{manageLocale.dir eq 'rtl'}">
+        	<link href="#{request.contextPath}/weblibs/custom/boot.css" rel="stylesheet"></link>
+        </c:if>
+        <style>
+        	.affix {
+			      top: 0;
+			      width: 100%;
+			      z-index: 9999 !important;
+			      }
+        </style>
+    </ui:composition>
+</html>

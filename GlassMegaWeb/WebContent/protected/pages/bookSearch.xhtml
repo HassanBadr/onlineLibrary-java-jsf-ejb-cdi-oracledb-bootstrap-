@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+
+<ui:composition template="/WEB-INF/templates/main.xhtml"> 
+    <ui:define name="menu">
+        <ui:include src="/protected/views/menu.xhtml"/>
+    </ui:define>    
+    
+    <ui:define name="content">
+        <h:form id="searchForm">  
+        <div class="panel-group">
+    <div class="panel panel-success">
+      <div class="panel-heading">
+      	<h3>#{resbundle['megaapp.protected.bookSearch.head_text']}</h3>
+      </div>
+      <div class="panel-body">
+		<h:outputText value="#{resbundle['megaapp.protected.bookSearch.label.book_title']} "/>
+		<div class="form-group row">
+		<div class="col-xs-6"> 
+           <h:inputText id="searchTitle" class="form-control" 
+                        value="#{bookSearchBacking.searchTitle}" 
+                        required="true"/>&#160;
+		</div>
+		<div class="col-xs-3">
+           <h:commandButton value="#{resbundle['megaapp.protected.bookSearch.action']}" class="btn btn-default" action="#{bookSearchBacking.retrieveBookList}">
+               <f:ajax execute="searchTitle" render="results messages"/>
+           </h:commandButton>
+           </div>
+           </div>
+           </div>
+           </div>
+         <div class="panel panel-default">
+     		 
+     		 <div class="panel-body">
+     		 
+           <h:panelGroup id="results" styleClass="table-responsive">
+               
+               <h:outputText id="informationMessage" 
+                             value="#{bookSearchBacking.infoMessage}" 
+                             rendered="#{bookSearchBacking.infoMessage ne null}"
+                             class="informationMessage"/>
+               
+               <h:dataTable value="#{bookSearchBacking.bookList}" 
+                            var="currentBook" styleClass="table table-hover" 
+                            rendered="#{not empty bookSearchBacking.bookList}">
+                   
+                   <h:column>
+                       <f:facet name="header">
+                           #{resbundle['megaapp.protected.bookSearch.table.isbn']}
+                       </f:facet>
+                       #{currentBook.isbn}
+                   </h:column>
+                   <h:column>
+                       <f:facet name="header">
+                           #{resbundle['megaapp.protected.bookSearch.table.publisher']}
+                       </f:facet>
+                       #{currentBook.publisher}
+                   </h:column>                   
+                   <h:column>
+                       <f:facet name="header">
+                           #{resbundle['megaapp.protected.bookSearch.table.title']}
+                       </f:facet>
+                       #{currentBook.title}
+                   </h:column>   
+                   <h:column>
+                       <f:facet name="header">
+                           #{resbundle['megaapp.protected.bookSearch.table.actions']}
+                       </f:facet>
+                       
+                       <c:if test="#{request.isUserInRole('megaAppUser')}">
+                            <h:commandLink value="" action="#{bookSearchBacking.requestBookCopy}">
+                                <span data-toggle="tooltip" data-placement="top" title="#{resbundle['megaapp.protected.bookSearch.table.actions.request_copy']}" class="glyphicon glyphicon-book"></span>
+                                <f:setPropertyActionListener target="#{bookSearchBacking.selectedBook}" value="#{currentBook}" />
+                                <f:ajax render=":searchForm:results :searchForm:messages" />
+                            </h:commandLink>    
+                       </c:if>
+                       
+                       <c:if test="#{request.isUserInRole('megaAppAdmin')}">
+                           <h:commandLink  value="" action="#{bookSearchBacking.deleteBook}">
+                                <span data-toggle="tooltip" data-placement="top" title="#{resbundle['megaapp.protected.bookSearch.table.actions.delete']}" class="glyphicon glyphicon-trash"></span>
+                                <f:setPropertyActionListener target="#{bookSearchBacking.selectedBook}" value="#{currentBook}" />
+                                <f:ajax render=":searchForm:results :searchForm:messages" />
+                           </h:commandLink> <br/> 
+                           <h:commandLink  value="" action="#{bookSearchBacking.downloadBook}">
+                                <span data-toggle="tooltip" data-placement="top" title="#{resbundle['megaapp.protected.bookSearch.table.actions.download_book']}" class="glyphicon glyphicon-download"></span>
+                                <f:setPropertyActionListener target="#{bookSearchBacking.selectedBook}" value="#{currentBook}" />
+                            </h:commandLink><br/>
+                             <!-- Trigger the modal with a button -->
+                             <h:commandLink  value="" >
+                             	<span data-toggle="tooltip" data-placement="top" title="#{resbundle['megaapp.protected.bookSearch.action.edit']}" class="glyphicon glyphicon-edit"></span>
+                             	<f:passThroughAttribute name="data-toggle" value="modal"/>
+                             	<f:passThroughAttribute name="data-target" value="#myModal"/>
+                                <f:setPropertyActionListener target="#{bookSearchBacking.selectedBook}" value="#{currentBook}" />
+                                <f:ajax render="myModal bookEditForm"/>
+                            </h:commandLink>
+  						
+                       </c:if>
+                       
+                   </h:column>                     
+                   
+               </h:dataTable> 
+               
+           </h:panelGroup>  
+            </div>
+    	</div>
+           <h:messages id="messages" class="errorMessage"/>
+        </div>   
+        </h:form>
+        
+        <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span class="glyphicon glyphicon-remove-circle"></span></button>
+          <h3>#{resbundle['megaapp.protected.admin.bookAdd.head_text']}</h3>
+        </div>
+        <div class="modal-body" style="padding-left: 50px;padding-right: 50px;">
+          <h:form id="bookEditForm" enctype="multipart/form-data" style="padding-left: 10;padding-right: 10" styleClass="form-horizontal"> 
+         
+            <h:outputText id="informationMessage" 
+                          value="#{bookAddBacking.infoMessage}" 
+                          rendered="#{bookAddBacking.infoMessage ne null}"
+                          styleClass="informationMessage"/>
+               
+            <div class="form-group">
+                <h:outputLabel value="#{resbundle['megaapp.protected.admin.bookAdd.label.isbn']}" for="isbn"/>
+                
+                <h:inputText id="isbn" value="#{bookSearchBacking.selectedBook.isbn}" 
+                             styleClass="form-control" required="true">
+                    <f:passThroughAttribute name="placeHolder" value="#{resbundle['megaapp.protected.admin.bookAdd.label.isbn']}"/>
+                </h:inputText>
+                       
+            </div>     
+            <div class="form-group">
+                <h:outputLabel value="#{resbundle['megaapp.protected.admin.bookAdd.label.title']}" for="title"/>
+                <h:inputText id="title" value="#{bookSearchBacking.selectedBook.title}" 
+                             styleClass="form-control" required="true">
+                    <f:passThroughAttribute name="placeHolder" value="#{resbundle['megaapp.protected.admin.bookAdd.label.title']}"/>
+                </h:inputText>                   
+            </div>
+            <div class="form-group">
+                <h:outputLabel value="#{resbundle['megaapp.protected.admin.bookAdd.label.author']}" for="author"/>
+                <h:inputText id="author" value="#{bookSearchBacking.selectedBook.author}" 
+                             styleClass="form-control" required="true">
+                    <f:passThroughAttribute name="placeHolder" value="#{resbundle['megaapp.protected.admin.bookAdd.label.author']}"/>
+                </h:inputText>                   
+            </div>    
+            
+            <div class="form-group">
+                <h:outputLabel value="#{resbundle['megaapp.protected.admin.bookAdd.label.publisher']}" for="publisher"/>
+                <h:inputText id="publisher" value="#{bookSearchBacking.selectedBook.publisher}" 
+                             styleClass="form-control" required="true">
+                    <f:passThroughAttribute name="placeHolder" value="#{resbundle['megaapp.protected.admin.bookAdd.label.publisher']}"/>
+                </h:inputText>                   
+            </div>            
+            
+            <div class="form-group">
+                <h:outputLabel value="#{resbundle['megaapp.protected.admin.bookAdd.label.lang']}" for="language"/>
+                <h:selectOneMenu id="language" value="#{bookSearchBacking.selectedBook.lang}" 
+                             styleClass="form-control" required="true">
+                    
+                    <f:selectItem itemValue="English" itemLabel="English"/>
+                    <f:selectItem itemValue="Others" itemLabel="Others"/>                    
+                </h:selectOneMenu>                   
+            </div> 
+            
+            <br/>
+            <h:commandButton value="#{resbundle['megaapp.protected.bookSearch.action.edit']}" action="#{bookSearchBacking.editBook()}" styleClass="btn btn-primary" >
+            	<f:passThroughAttribute name="data-dismiss" value="modal"/>
+                <f:ajax execute="@form" render="@all"/>
+            </h:commandButton>&#160;&#160;
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <h:messages id="messages" class="errorMessage"/>
+        </h:form>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+    </ui:define>
+    
+</ui:composition>
+
+</html>

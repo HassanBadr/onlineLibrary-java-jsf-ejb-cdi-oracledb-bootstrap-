@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <cc:interface>
+        <cc:attribute name="label" type="java.lang.String" default="Mega App" />        
+        <cc:attribute name="value" type="java.lang.String" default="#" />                         
+    </cc:interface>
+
+    <cc:implementation>
+        <div id="#{cc.clientId}" class="navbar navbar-inverse" data-spy="affix" data-offset-top="60">
+            <div class="container-fluid">
+            	<div class="navbar-header">
+                	<a class="navbar-brand" href="#{cc.attrs.value}">
+                	<span class="glyphicon glyphicon-home"></span>
+                	#{cc.attrs.label}</a>
+                </div>
+                <ul class="nav navbar-nav">       
+                    <cc:insertChildren />
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                	<li ><h:commandLink action="#{manageLocale.changeToARLocale()}" value="#{resbundle['megaapp.header.label.arabic']}" /></li>
+      				<li ><h:commandLink action="#{manageLocale.changeToENLocale()}" value="#{resbundle['megaapp.header.label.english']}" /></li>
+                </ul>
+            </div>
+        </div>        
+    </cc:implementation>
+</html>
